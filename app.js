@@ -26,6 +26,32 @@ UI.prototype.addBookToList = function(book){
     console.log(row);
 }
 
+//Show Alert
+UI.prototype.showAlert = function(message, className){
+    //Create a div
+    const div = document.createElement('div');
+    //Add classes
+    div.className = `alert ${className}`;
+    //Add Text
+    div.appendChild(document.createTextNode(message));
+    //Get Parent
+    const container = document.querySelector('.container');
+    //Get form
+    const form = document.querySelector('#book-form');
+    //Insert alert
+    container.insertBefore(div, form);
+    //Timeout after 3 secs
+    setTimeout(function(){
+        document.querySelector('.alert').remove()
+    }, 3000);
+}
+
+//Delete Book
+UI.prototype.deleteBook = function(target){
+    if(target.className === 'delete'){
+        target.parentElement.parentElement.remove();
+    }
+}
 //Clear Fields
 UI.prototype.clearFields = function(){
     document.getElementById('title').value = '';
@@ -34,7 +60,7 @@ UI.prototype.clearFields = function(){
 }
 
 
-//Event Listeners
+//Event Listener for add book
 document.getElementById('book-form').addEventListener('submit', function(e){
     //Get form values
     const 
@@ -50,11 +76,36 @@ document.getElementById('book-form').addEventListener('submit', function(e){
     const ui = new UI();
     // console.log(ui);        //contains prototype method of addBookToList
 
-    //Add book to list
-    ui.addBookToList(book);
+    //Validate
+    if(title === '' || author === '' || isbn === ''){
+        //Error alert
+        ui.showAlert('Please fill in all fields', 'error');
+    }else{
 
-    //clear fields
-    ui.clearFields();
+        //Add book to list
+        ui.addBookToList(book);
 
+        //Show success
+        ui.showAlert('Book Added', 'success');
+
+        //clear fields
+        ui.clearFields();
+
+    }
+    e.preventDefault();
+});
+
+//Event Listener for Delete
+document.getElementById('book-list').addEventListener('click', function(e){
+
+    //Instantiate UI
+    const ui = new UI();
+
+    //Delete Book
+    ui.deleteBook(e.target);
+
+    //Show Message
+    ui.showAlert('Book Removed!', 'success');
+   
     e.preventDefault();
 });
